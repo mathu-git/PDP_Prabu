@@ -1,0 +1,54 @@
+diff --git a/vendor/magento/framework/Mail/Message.php b/vendor/magento/framework/Mail/Message.php
+index 1f423e801087..0e4d79aac933 100644
+--- a/vendor/magento/framework/Mail/Message.php
++++ b/vendor/magento/framework/Mail/Message.php
+@@ -171,7 +171,6 @@ private function createMimeFromString($body, $messageType)
+         $part = new Part($body);
+         $part->setCharset($this->zendMessage->getEncoding());
+         $part->setEncoding(Mime::ENCODING_QUOTEDPRINTABLE);
+-        $part->setDisposition(Mime::DISPOSITION_INLINE);
+         $part->setType($messageType);
+         $mimeMessage = new \Zend\Mime\Message();
+         $mimeMessage->addPart($part);
+diff --git a/vendor/magento/framework/Mail/MimePart.php b/vendor/magento/framework/Mail/MimePart.php
+index 9b9bb6eadbec..a43ed4b36e07 100644
+--- a/vendor/magento/framework/Mail/MimePart.php
++++ b/vendor/magento/framework/Mail/MimePart.php
+@@ -15,6 +15,9 @@
+  */
+ class MimePart implements MimePartInterface
+ {
++    /**
++     * UTF-8 charset
++     */
+     public const CHARSET_UTF8 = 'utf-8';
+
+     /**
+@@ -47,7 +50,7 @@ public function __construct(
+         $content,
+         ?string $type = MimeInterface::TYPE_HTML,
+         ?string $fileName = null,
+-        ?string $disposition = MimeInterface::DISPOSITION_INLINE,
++        ?string $disposition = null,
+         ?string $encoding = MimeInterface::ENCODING_QUOTED_PRINTABLE,
+         ?string $description = null,
+         ?array $filters = [],
+diff --git a/vendor/magento/framework/Mail/Test/Unit/MessageTest.php b/vendor/magento/framework/Mail/Test/Unit/MessageTest.php
+index c29ca4d261cc..6e5763714b88 100644
+--- a/vendor/magento/framework/Mail/Test/Unit/MessageTest.php
++++ b/vendor/magento/framework/Mail/Test/Unit/MessageTest.php
+@@ -29,7 +29,6 @@ public function testSetBodyHtml()
+         $this->assertEquals('quoted-printable', $part->getEncoding());
+         $this->assertEquals('utf-8', $part->getCharset());
+         $this->assertEquals('body', $part->getContent());
+-        $this->assertEquals('inline', $part->getDisposition());
+     }
+
+     public function testSetBodyText()
+@@ -41,6 +40,5 @@ public function testSetBodyText()
+         $this->assertEquals('quoted-printable', $part->getEncoding());
+         $this->assertEquals('utf-8', $part->getCharset());
+         $this->assertEquals('body', $part->getContent());
+-        $this->assertEquals('inline', $part->getDisposition());
+     }
+ }
